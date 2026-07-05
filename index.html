@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HOÀNG MINH CHIẾN – Ông Trùm Mạng</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --matrix-green: #00ff41;
+  --matrix-dark: #003b00;
+  --matrix-glow: rgba(0, 255, 65, 0.6);
+  --bg-black: #050505;
+  --bg-panel: #0a0e0a;
+  --bg-panel-border: #004d00;
+  --text-main: #e0ffe0;
+  --text-muted: #80c080;
+  --r: 4px; /* Góc vuông vức hơn cho hợp phong cách hacker */
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-black);
+  color: var(--text-main);
+  font-family: 'Fira Code', monospace;
+  overflow-x: hidden;
+  cursor: crosshair; /* Con trỏ mục tiêu */
+}
+
+/* ── MATRIX BACKGROUND ── */
+canvas#matrix {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* ── CRT SCANLINE EFFECT ── */
+body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 999;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.wrap { position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid var(--matrix-green);
+  box-shadow: 0 0 15px var(--matrix-glow);
+}
+.logo {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--matrix-green);
+  text-shadow: 0 0 10px var(--matrix-green);
+  letter-spacing: 2px;
+}
+.nav-tag {
+  font-size: 0.75rem; letter-spacing: 2px; color: var(--bg-black);
+  background: var(--matrix-green);
+  font-weight: bold;
+  padding: 5px 14px;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px var(--matrix-green);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px;
+  position: relative; overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 22px;
+  background: rgba(0, 59, 0, 0.4);
+  border: 1px solid var(--matrix-green);
+  font-size: 0.8rem; letter-spacing: 2px; color: var(--matrix-green);
+  text-transform: uppercase; margin-bottom: 28px;
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+.badge-dot {
+  width: 10px; height: 10px; background: var(--matrix-green);
+  box-shadow: 0 0 10px var(--matrix-green);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0.3; } }
+
+h1.name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+  color: #fff;
+  text-shadow: 0 0 20px var(--matrix-green), 2px 2px 0px var(--matrix-dark);
+}
+.glitch-text {
+  position: relative;
+}
+.glitch-text::before, .glitch-text::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+}
+.glitch-text::before {
+  left: 2px; text-shadow: -1px 0 red; animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+.glitch-text::after {
+  left: -2px; text-shadow: -1px 0 blue; animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); }
+  20% { clip-path: inset(60% 0 10% 0); }
+  40% { clip-path: inset(40% 0 50% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(10% 0 70% 0); }
+  100% { clip-path: inset(30% 0 20% 0); }
+}
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); }
+  20% { clip-path: inset(30% 0 20% 0); }
+  40% { clip-path: inset(70% 0 10% 0); }
+  60% { clip-path: inset(20% 0 50% 0); }
+  80% { clip-path: inset(50% 0 30% 0); }
+  100% { clip-path: inset(5% 0 80% 0); }
+}
+
+.hero-sub {
+  font-family: 'Fira Code', monospace;
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  letter-spacing: 4px; color: var(--matrix-green);
+  margin-bottom: 24px; font-weight: 600;
+}
+
+.hero-desc {
+  max-width: 700px; color: var(--text-muted); font-size: 1rem;
+  line-height: 1.8; margin-bottom: 40px;
+  background: rgba(0, 20, 0, 0.6);
+  padding: 20px; border-left: 4px solid var(--matrix-green);
+  text-align: justify;
+}
+
+.hero-ctas {
+  display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 60px;
+}
+
+.btn-hacker {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px;
+  background: var(--matrix-green); color: var(--bg-black);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;
+  text-decoration: none; text-transform: uppercase;
+  box-shadow: 0 0 20px var(--matrix-glow);
+  transition: all 0.2s; border: 2px solid var(--matrix-green);
+}
+.btn-hacker:hover { background: transparent; color: var(--matrix-green); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px;
+  background: transparent; border: 2px solid var(--matrix-green);
+  color: var(--matrix-green); font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;
+  text-decoration: none; text-transform: uppercase;
+  transition: all 0.3s;
+}
+.btn-ghost:hover { background: rgba(0, 255, 65, 0.1); box-shadow: 0 0 20px var(--matrix-glow); }
+
+/* ── STATS ── */
+.stats { display: flex; gap: 60px; flex-wrap: wrap; justify-content: center; }
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Share Tech Mono', monospace; font-size: 2.5rem; font-weight: 700;
+  color: var(--matrix-green); text-shadow: 0 0 10px var(--matrix-green);
+  display: block;
+}
+.stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── SECTIONS ── */
+.divider {
+  border: none; width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
+  box-shadow: 0 0 10px var(--matrix-green);
+}
+section { padding: 90px 24px; position: relative; z-index: 1; }
+.container { max-width: 1100px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-size: 0.8rem; letter-spacing: 3px; color: var(--matrix-green);
+  margin-bottom: 10px; display: inline-block;
+  border-bottom: 1px dashed var(--matrix-green);
+}
+.section-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700;
+  margin-bottom: 14px; line-height: 1.15; color: #fff;
+  text-transform: uppercase; text-shadow: 0 0 5px var(--matrix-green);
+}
+.section-title span { color: var(--matrix-green); }
+.section-sub { color: var(--text-muted); font-size: 1rem; max-width: 700px; margin-bottom: 50px; line-height: 1.8; }
+
+/* ── GRID & CARDS (TERMINAL STYLE) ── */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 24px; }
+
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--bg-panel-border);
+  border-left: 4px solid var(--matrix-green);
+  padding: 30px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative; transition: all 0.3s;
+}
+.card:hover {
+  border-color: var(--matrix-green);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
+  transform: translateY(-5px);
+}
+.card-badge {
+  font-size: 0.7rem; font-weight: bold; letter-spacing: 1px;
+  padding: 4px 10px; background: rgba(0, 255, 65, 0.1);
+  color: var(--matrix-green); border: 1px solid var(--matrix-green);
+  width: fit-content; text-transform: uppercase;
+}
+.card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.1rem; color: #fff; text-transform: uppercase;
+}
+.card-title::before { content: ">_ "; color: var(--matrix-green); }
+.card-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; flex: 1; }
+.card-price {
+  font-family: 'Share Tech Mono', monospace; font-size: 1rem; color: var(--matrix-green);
+  margin-top: 10px; font-weight: bold;
+}
+.card-link {
+  font-size: 0.85rem; font-weight: bold; color: var(--bg-black);
+  background: var(--matrix-green); text-decoration: none;
+  padding: 8px 16px; text-align: center; text-transform: uppercase;
+  transition: all 0.2s; margin-top: auto;
+}
+.card-link:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+
+.card.featured { grid-column: span 2; background: rgba(0, 30, 0, 0.8); border: 1px solid var(--matrix-green); }
+@media (max-width: 700px) { .card.featured { grid-column: span 1; } }
+
+/* ── MEGA COMBO VIP (HACKER MASTERCLASS) ── */
+.mega-combo {
+  margin-top: 60px;
+  background: rgba(0, 10, 0, 0.9);
+  border: 2px dashed var(--matrix-green);
+  padding: 50px; position: relative;
+  box-shadow: inset 0 0 50px rgba(0, 255, 65, 0.05), 0 0 30px rgba(0, 255, 65, 0.1);
+}
+.mega-combo::before {
+  content: "[ROOT ACCESS GRANTED]";
+  position: absolute; top: -12px; left: 40px;
+  background: var(--bg-black); color: var(--matrix-green);
+  padding: 0 10px; font-weight: bold; font-size: 0.9rem;
+}
+.mega-label { font-size: 0.9rem; color: var(--matrix-green); margin-bottom: 10px; animation: blink 1.5s infinite; }
+.mega-title {
+  font-family: 'Share Tech Mono', monospace; font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: #fff; margin-bottom: 20px; text-transform: uppercase;
+}
+.mega-title span { color: var(--matrix-green); text-shadow: 0 0 10px var(--matrix-glow); }
+.mega-desc { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 30px; }
+
+.mega-includes {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px; margin-bottom: 40px;
+}
+.mega-item {
+  color: var(--text-main); font-size: 0.9rem;
+  background: rgba(0, 255, 65, 0.05); padding: 12px;
+  border-left: 2px solid var(--matrix-green);
+}
+.mega-item::before { content: "[+] "; color: var(--matrix-green); font-weight: bold; }
+
+.mega-price-row { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; background: rgba(0,0,0,0.5); padding: 20px; border: 1px solid var(--bg-panel-border); }
+.mega-old { font-size: 1rem; color: #555; text-decoration: line-through; }
+.mega-price {
+  font-family: 'Share Tech Mono', monospace; font-size: 3rem; color: var(--matrix-green);
+  text-shadow: 0 0 20px var(--matrix-green); line-height: 1;
+}
+.btn-mega {
+  padding: 20px 50px; background: var(--matrix-green); color: var(--bg-black);
+  font-family: 'Share Tech Mono', monospace; font-size: 1.2rem; font-weight: 700;
+  text-decoration: none; text-transform: uppercase; box-shadow: 0 0 30px var(--matrix-glow);
+  transition: all 0.2s;
+}
+.btn-mega:hover { background: #fff; box-shadow: 0 0 40px #fff; }
+
+/* ── CONTACT SECTION ── */
+#contact { text-align: center; }
+.contact-wrapper {
+  background: rgba(0, 15, 0, 0.8);
+  border: 1px solid var(--matrix-green);
+  padding: 70px 40px; max-width: 700px; margin: 0 auto;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.1);
+}
+.contact-title { font-family: 'Share Tech Mono', monospace; font-size: 2.5rem; color: #fff; margin-bottom: 20px; text-transform: uppercase; }
+.contact-sub { color: var(--text-muted); font-size: 1rem; margin-bottom: 40px; }
+.zalo-btn {
+  display: inline-block; padding: 20px 60px;
+  background: transparent; color: var(--matrix-green);
+  border: 2px solid var(--matrix-green);
+  font-family: 'Share Tech Mono', monospace; font-size: 1.2rem; font-weight: bold;
+  text-decoration: none; text-transform: uppercase;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.zalo-btn:hover { background: var(--matrix-green); color: var(--bg-black); box-shadow: 0 0 30px var(--matrix-green); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg-black); border-top: 1px solid var(--bg-panel-border);
+  padding: 40px 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem;
+}
+footer strong { color: var(--matrix-green); font-size: 1rem; }
+.back-top {
+  display: inline-block; margin-top: 20px; color: var(--matrix-green);
+  text-decoration: none; border: 1px solid var(--matrix-green);
+  padding: 8px 20px; transition: all 0.3s;
+}
+.back-top:hover { background: var(--matrix-green); color: var(--bg-black); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-black); }
+::-webkit-scrollbar-thumb { background: var(--matrix-green); }
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="wrap">
+
+<header>
+  <div class="logo">⚡|HOÀNG MINH CHIẾN</div>
+  <div class="nav-tag">HACKER / TRICKER CHUYÊN NGHIỆP</div>
+</header>
+
+<section id="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    HỆ THỐNG BẢO MẬT & DỊCH VỤ FACEBOOK ĐỈNH CAO
+  </div>
+
+  <h1 class="name glitch-text" data-text="ÔNG TRÙM MẠNG HOÀNG MINH CHIẾN">ÔNG TRÙM MẠNG HOÀNG MINH CHIẾN</h1>
+  <p class="hero-sub">The Legendary Hoàng Minh Chiến — Cơn ác mộng của Hacker Mũ Đen</p>
+  
+  <p class="hero-desc">
+    Được suy tôn là huyền thoại và "Ông trùm mạng" trong giới Underground, <strong>Hoàng Minh Chiến</strong> là thiên tài giải mã thuật toán Facebook. Nắm giữ những bí mật cốt lõi của hệ thống Meta, không có tài khoản nào anh không thể lấy lại, không có lớp bảo mật nào có thể cản bước. Giao việc cho Hoàng Minh Chiến là giao cho sự chắc chắn tuyệt đối.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-hacker">KẾT NỐI HỆ THỐNG</a>
+    <a href="#services" class="btn-ghost">TRUY CẬP DỊCH VỤ</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num" id="stat-online">9,999+</span>
+      <span class="stat-label">Tài khoản được cứu</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Tỷ lệ thành công</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Bất tử</span>
+      <span class="stat-label">Bảo mật hệ thống</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="services">
+  <div class="container">
+    <p class="section-eyebrow">◈ KHO VŨ KHÍ CỦA Hoàng Minh Chiến</p>
+    <h2 class="section-title">Dịch Vụ <span>Underground</span></h2>
+    <p class="section-sub">Được thực hiện trực tiếp bởi bàn tay của Hoàng Minh Chiến. Đã nhận là done, không có khái niệm thất bại trong từ điển của ông trùm.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-badge">CẤP ĐỘ S</div>
+        <div class="card-title">KHÔI PHỤC TÀI KHOẢN BỊ HACK</div>
+        <div class="card-desc">Chấp mọi loại hacker mũ đen chiếm quyền. Trích xuất dữ liệu, định tuyến lại thuật toán và đoạt lại tài khoản chỉ trong chớp mắt.</div>
+        <div class="card-price">TỪ 200.000Đ</div>
+        <a href="#contact" class="card-link">EXECUTE_ORDER</a>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">GIẢI MÃ</div>
+        <div class="card-title">BYPASS KHÓA 956 (KÉT SẮT / Ổ TÍM)</div>
+        <div class="card-desc">Phá vỡ mọi thuật toán khóa két sắt của Meta bằng các script và tut độc quyền chỉ Hoàng Minh Chiến mới sở hữu.</div>
+        <div class="card-price">TỪ 300.000Đ</div>
+        <a href="#contact" class="card-link">EXECUTE_ORDER</a>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">KHIÊN BẢO VỆ</div>
+        <div class="card-title">BẢO MẬT TÀI KHOẢN BẤT TỬ</div>
+        <div class="card-desc">Xây dựng bức tường lửa bảo vệ profile của bạn. Chống rip, chống report, thiết lập 2FA siêu cấp. Tài khoản của bạn sẽ trở thành pháo đài.</div>
+        <div class="card-price">TỪ 250.000Đ</div>
+        <a href="#contact" class="card-link">EXECUTE_ORDER</a>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">TỰ ĐỘNG HÓA</div>
+        <div class="card-title">AUTO SCRIPT FACEBOOK</div>
+        <div class="card-desc">Thiết lập các lệnh Terminal để tự động lọc bạn bè, dọn dẹp profile, tương tác ảo hóa. Mọi thứ được vận hành bằng mã code thông minh.</div>
+        <div class="card-price">TỪ 50.000Đ</div>
+        <a href="#contact" class="card-link">EXECUTE_ORDER</a>
+      </div>
+
+      <div class="card featured">
+        <div class="card-badge" style="color:red; border-color:red;">MẬT LỆNH ĐỎ</div>
+        <div class="card-title" style="color:red; text-shadow:0 0 10px red;">MỞ KHÓA VÔ HIỆU HÓA VĨNH VIỄN</div>
+        <div class="card-desc">Trường hợp tuyệt vọng nhất của mọi người dùng, nhưng lại là sở trường của Hoàng Minh Chiến. Lách qua khe hở của hệ thống Meta để hồi sinh tài khoản từ cõi chết. Cam kết 100% hoàn tiền nếu hệ thống từ chối.</div>
+        <div class="card-price" style="color:#fff;">TỪ 250.000Đ</div>
+        <a href="#contact" class="card-link" style="background:red; color:#fff; box-shadow:0 0 15px red;">EXECUTE_ORDER_VIP</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="delete">
+  <div class="container">
+    <p class="section-eyebrow">◈ SÁT THỦ XÓA DẤU VẾT</p>
+    <h2 class="section-title">Triệt Tiêu <span>Profile</span></h2>
+    <p class="section-sub">Kỹ thuật xóa sổ tài khoản không để lại bất kỳ dữ liệu số nào. Chuyên môn cao cấp của Hoàng Minh Chiến giúp xóa xổ mọi loại tài khoản khó nhằn nhất.</p>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-badge">CƠ BẢN</div>
+        <div class="card-title">XÓA PROFILE CHUẨN</div>
+        <div class="card-desc">Đánh sập và xóa vĩnh viễn tài khoản Facebook cá nhân. Xóa sạch mọi dấu vết số, không thể khôi phục bởi bất kỳ ai.</div>
+        <div class="card-price">TỪ 100.000Đ</div>
+        <a href="#contact" class="card-link">RUN_SCRIPT</a>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">ĐẶC NHIỆM</div>
+        <div class="card-title">XÓA ACC KHÔNG AVATAR & KHÓA TCN & CHUYÊN NGHIỆP</div>
+        <div class="card-desc">Vượt qua các điều kiện thông thường của Meta. Kể cả tài khoản không ảnh đại diện hay đang bị khóa, thủ thuật của Chiến đều giải quyết mượt mà.</div>
+        <div class="card-price">TỪ 200.000Đ</div>
+        <a href="#contact" class="card-link">RUN_SCRIPT</a>
+      </div>
+
+      <div class="card">
+        <div class="card-badge">QUY MÔ LỚN</div>
+        <div class="card-title">TIÊU DIỆT FANPAGE</div>
+        <div class="card-desc">Hạ gục các Fanpage từ nhỏ đến hàng trăm ngàn lượt theo dõi. Phá vỡ quyền quản trị và xóa sổ page khỏi máy chủ của Meta.</div>
+        <div class="card-price">TỪ 300.000Đ</div>
+        <a href="#contact" class="card-link">RUN_SCRIPT</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="courses">
+  <div class="container">
+    <p class="section-eyebrow">◈ TRUYỀN NHÂN CỦA Hoàng Minh Chiến</p>
+    <h2 class="section-title">Hệ Thống Đào Tạo <span>Độc Tôn</span></h2>
+    <p class="section-sub">Hoàng Minh Chiến chỉ nhận đệ tử thực thụ. Không bán lẻ kiến thức. Đây là tấm vé duy nhất để bạn bước vào thế giới Underground và trở thành một Tricker khét tiếng.</p>
+
+    <div class="mega-combo">
+      <div class="mega-label">THÔNG TIN TỐI MẬT [TOP SECRET]</div>
+      <div class="mega-title">ULTIMATE Hoàng Minh Chiến <span>MASTERCLASS</span></div>
+      <div class="mega-desc">
+        Truyền lại 100% tinh hoa, mánh khóe và tư duy của "Ông trùm mạng" Hoàng Minh Chiến. Gói gọn toàn bộ bí kíp từ A đến Z giúp bạn trở thành một bậc thầy về Facebook Services. Bứt phá thu nhập, tự do kiểm soát mọi thuật toán của Meta.
+      </div>
+      
+      <div class="mega-includes">
+        <div class="mega-item">Giải mã thuật toán & Bảo mật bất tử</div>
+        <div class="mega-item">Tut gỡ khóa 956, Vô hiệu hóa siêu tốc</div>
+        <div class="mega-item">Nghệ thuật xóa sổ Profile/Fanpage</div>
+        <div class="mega-item">Auto Script & Điều khiển hệ thống</div>
+        <div class="mega-item">Bí thuật lên Tick Xanh Meta</div>
+        <div class="mega-item">Gia nhập tổ chức Underground VIP</div>
+        <div class="mega-item">Support 1-1 trực tiếp từ Hoàng Minh Chiến</div>
+        <div class="mega-item">Update mọi lỗ hổng bảo mật trọn đời</div>
+      </div>
+
+      <div class="mega-price-row">
+        <div>
+          <div class="mega-old">Giá trị thực: Vô giá</div>
+          <div class="mega-price">600.000Đ</div>
+        </div>
+        <a href="#contact" class="btn-mega">NHẬP MÔN NGAY LẬP TỨC</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-wrapper">
+      <p style="font-size:0.8rem;letter-spacing:3px;color:var(--matrix-green);margin-bottom:14px;">[ KÊNH GIAO TIẾP ĐÃ ĐƯỢC MÃ HÓA ]</p>
+      <h2 class="contact-title">KẾT NỐI VỚI<br>ÔNG TRÙM</h2>
+      <p class="contact-sub">Đường dây nóng được mã hóa end-to-end. Mọi yêu cầu của bạn sẽ được Hoàng Minh Chiến xử lý một cách âm thầm và hoàn hảo nhất.</p>
+      <a href="https://zalo.me/0345161185" class="zalo-btn" target="_blank">
+        >_ KHỞI ĐỘNG CHAT ZALO
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>ÔNG TRÙM MẠNG HOÀNG MINH CHIẾN</strong></p>
+  <p style="margin-top:8px;">Underground Facebook Specialist · Khôi Phục · Bảo Mật · Triệt Tiêu · Đào Tạo</p>
+  <p style="margin-top:15px;font-size:0.75rem;opacity:0.5;">Hệ thống được lập trình và bảo vệ tuyệt đối. Mọi hành vi sao chép sẽ bị report đánh sập.</p>
+  <br>
+  <a href="#hero" class="back-top">/ROOT_DIRECTORY</a>
+</footer>
+
+</div><script>
+/* ── MATRIX RAIN EFFECT ── */
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'.split('');
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for(let x = 0; x < columns; x++) {
+  drops[x] = 1;
+}
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = '#00ff41';
+  ctx.font = fontSize + 'px monospace';
+  
+  for(let i = 0; i < drops.length; i++) {
+    const text = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    
+    if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+    drops[i]++;
+  }
+}
+
+setInterval(drawMatrix, 35);
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
