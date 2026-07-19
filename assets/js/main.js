@@ -27,6 +27,22 @@
     requestAnimationFrame(() => overlay.classList.add('visible'));
   }
 
+  function waitForPlayerThenShowPrompt(elapsed) {
+    elapsed = elapsed || 0;
+    if (window.ytReady) {
+      showMusicPrompt();
+      return;
+    }
+    // Nếu quá 6 giây mà YouTube API vẫn chưa sẵn sàng (mạng chậm/bị chặn),
+    // bỏ qua bước hỏi nhạc để không giữ chân người dùng ở màn hình loading.
+    if (elapsed >= 6000) {
+      paused = false;
+      tick();
+      return;
+    }
+    setTimeout(() => waitForPlayerThenShowPrompt(elapsed + 150), 150);
+  }
+
   function hideMusicPromptAndResume() {
     overlay.classList.remove('visible');
     setTimeout(() => overlay.classList.remove('show'), 300);
@@ -51,9 +67,11 @@
     pct.textContent = progress + '%';
 
     // Dừng lại đúng lúc chạm mốc 50% để hỏi bật nhạc
+    // (chờ YouTube player sẵn sàng trước khi hiện popup, để bấm "Có" phát nhạc được ngay)
     if (!halfwayShown && progress >= 50) {
       halfwayShown = true;
-      showMusicPrompt();
+      paused = true;
+      waitForPlayerThenShowPrompt();
       return;
     }
 
