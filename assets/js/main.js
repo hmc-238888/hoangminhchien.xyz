@@ -68,13 +68,13 @@
   tick();
 })();
 
-/* ─── Background Music (YouTube) ────────────────────────────────────── */
+/* ─── Background Music (YouTube) — load API as early as possible ────── */
 var ytPlayer      = null;
 var ytReady       = false;
 var musicPlaying  = false;
 var YT_VIDEO_ID   = 'lcxIND8GXpw';
 
-function onYouTubeIframeAPIReady() {
+window.onYouTubeIframeAPIReady = function () {
   ytPlayer = new YT.Player('yt-player', {
     height: '0',
     width: '0',
@@ -93,7 +93,15 @@ function onYouTubeIframeAPIReady() {
       }
     }
   });
-}
+};
+
+// Nạp script YouTube API ngay lập tức, song song với loading bar,
+// để player đã sẵn sàng từ trước khi người dùng bấm "Có" ở mốc 50%.
+(function loadYouTubeAPI() {
+  var tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
 
 window.startBackgroundMusic = function () {
   var toggle = document.getElementById('music-toggle');
