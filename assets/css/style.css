@@ -1246,33 +1246,3 @@ footer::before {
   flex: 1;
   min-width: 130px;
 }
-
-/* ─── Floating Music Toggle ─────────────────────────────────────────── */
-#music-toggle {
-  position: fixed;
-  bottom: 168px;
-  right: 24px;
-  z-index: 999;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(to right, var(--neon-pink), var(--neon-magenta));
-  color: #fff;
-  font-size: 1.1rem;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 15px rgba(255,0,122,0.4);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-#music-toggle.visible { display: flex; }
-#music-toggle:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(255,0,122,0.6);
-}
-#music-toggle.playing i {
-  animation: bounce-y 1s ease-in-out infinite;
-}
-@media (max-width: 640px) {
-  #music-toggle { bottom: 152px; right: 16px; width: 46px; height: 46px; font-size: 1rem; }
-}
