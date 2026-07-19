@@ -1,27 +1,134 @@
 'use strict';
 
-/* ─── Loading Screen ────────────────────────────────────────────────── */
+/* ─── Loading Screen + Music Prompt (pauses at 50%) ─────────────────── */
 (function () {
-  const screen = document.getElementById('loading-screen');
-  const bar    = document.getElementById('loading-bar');
-  const pct    = document.getElementById('loading-percent');
-  let progress = 0;
+  const screen  = document.getElementById('loading-screen');
+  const bar     = document.getElementById('loading-bar');
+  const pct     = document.getElementById('loading-percent');
+  const overlay = document.getElementById('music-prompt-overlay');
+  const btnYes  = document.getElementById('music-prompt-yes');
+  const btnNo   = document.getElementById('music-prompt-no');
 
-  const interval = setInterval(() => {
+  let progress      = 0;
+  let paused        = false;
+  let halfwayShown  = false;
+
+  function finishLoading() {
+    setTimeout(() => {
+      screen.style.opacity = '0';
+      screen.style.pointerEvents = 'none';
+      setTimeout(() => { screen.style.display = 'none'; }, 500);
+    }, 300);
+  }
+
+  function showMusicPrompt() {
+    paused = true;
+    overlay.classList.add('show');
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+  }
+
+  function hideMusicPromptAndResume() {
+    overlay.classList.remove('visible');
+    setTimeout(() => overlay.classList.remove('show'), 300);
+    paused = false;
+    tick();
+  }
+
+  btnYes.addEventListener('click', () => {
+    if (window.startBackgroundMusic) window.startBackgroundMusic();
+    hideMusicPromptAndResume();
+  });
+  btnNo.addEventListener('click', () => {
+    hideMusicPromptAndResume();
+  });
+
+  function tick() {
+    if (paused) return;
+
     const step = Math.floor(Math.random() * 15) + 5;
     progress = Math.min(progress + step, 100);
     bar.style.width = progress + '%';
     pct.textContent = progress + '%';
 
-    if (progress >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        screen.style.opacity = '0';
-        screen.style.pointerEvents = 'none';
-        setTimeout(() => { screen.style.display = 'none'; }, 500);
-      }, 300);
+    // Dừng lại đúng lúc chạm mốc 50% để hỏi bật nhạc
+    if (!halfwayShown && progress >= 50) {
+      halfwayShown = true;
+      showMusicPrompt();
+      return;
     }
-  }, 100);
+
+    if (progress >= 100) {
+      finishLoading();
+      return;
+    }
+
+    setTimeout(tick, 100);
+  }
+
+  tick();
+})();
+
+/* ─── Background Music (YouTube) ────────────────────────────────────── */
+var ytPlayer      = null;
+var ytReady       = false;
+var musicPlaying  = false;
+var YT_VIDEO_ID   = 'lcxIND8GXpw';
+
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('yt-player', {
+    height: '0',
+    width: '0',
+    videoId: YT_VIDEO_ID,
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      loop: 1,
+      playlist: YT_VIDEO_ID,
+      playsinline: 1
+    },
+    events: {
+      onReady: function () {
+        ytReady = true;
+        if (window.__pendingPlay) window.startBackgroundMusic();
+      }
+    }
+  });
+}
+
+window.startBackgroundMusic = function () {
+  var toggle = document.getElementById('music-toggle');
+  if (!ytReady || !ytPlayer) { window.__pendingPlay = true; return; }
+  ytPlayer.setVolume(50);
+  ytPlayer.unMute();
+  ytPlayer.playVideo();
+  musicPlaying = true;
+  if (toggle) {
+    toggle.classList.add('playing');
+    toggle.querySelector('i').className = 'fa-solid fa-volume-high';
+  }
+};
+
+(function () {
+  var toggle = document.getElementById('music-toggle');
+  if (!toggle) return;
+  toggle.classList.add('visible'); // luôn hiện nút để bật/tắt nhạc bất cứ lúc nào
+
+  toggle.addEventListener('click', function () {
+    if (!ytReady) return;
+    if (musicPlaying) {
+      ytPlayer.pauseVideo();
+      musicPlaying = false;
+      toggle.classList.remove('playing');
+      toggle.querySelector('i').className = 'fa-solid fa-music';
+    } else {
+      ytPlayer.unMute();
+      ytPlayer.setVolume(50);
+      ytPlayer.playVideo();
+      musicPlaying = true;
+      toggle.classList.add('playing');
+      toggle.querySelector('i').className = 'fa-solid fa-volume-high';
+    }
+  });
 })();
 
 /* ─── Header: scroll + hamburger ────────────────────────────────────── */
