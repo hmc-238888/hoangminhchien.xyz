@@ -1172,3 +1172,98 @@ footer::before {
 /* ─── Utility ───────────────────────────────────────────────────────── */
 .hidden  { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+/* ─── Music Prompt Modal ────────────────────────────────────────────── */
+#music-prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(5,5,5,0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#music-prompt-overlay.show {
+  display: flex;
+}
+#music-prompt-overlay.visible {
+  opacity: 1;
+}
+.music-prompt-box {
+  max-width: 420px;
+  width: 100%;
+  padding: 40px 32px;
+  text-align: center;
+  border-color: rgba(192,38,211,0.4);
+  box-shadow: 0 0 40px rgba(255,0,122,0.15);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+#music-prompt-overlay.visible .music-prompt-box {
+  transform: scale(1);
+}
+.music-prompt-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(to right, var(--neon-pink), var(--neon-magenta));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  animation: pulse-orb 2s ease-in-out infinite;
+}
+.music-prompt-box h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-white);
+  margin-bottom: 12px;
+}
+.music-prompt-box p {
+  color: var(--text-sub);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+}
+.music-prompt-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ─── Floating Music Toggle ─────────────────────────────────────────── */
+#music-toggle {
+  position: fixed;
+  bottom: 168px;
+  right: 24px;
+  z-index: 999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(to right, var(--neon-pink), var(--neon-magenta));
+  color: #fff;
+  font-size: 1.1rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255,0,122,0.4);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+#music-toggle.visible { display: flex; }
+#music-toggle:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(255,0,122,0.6);
+}
+#music-toggle.playing i {
+  animation: bounce-y 1s ease-in-out infinite;
+}
+@media (max-width: 640px) {
+  #music-toggle { bottom: 152px; right: 16px; width: 46px; height: 46px; font-size: 1rem; }
+}
