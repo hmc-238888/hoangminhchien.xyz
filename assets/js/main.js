@@ -27,22 +27,6 @@
     requestAnimationFrame(() => overlay.classList.add('visible'));
   }
 
-  function waitForPlayerThenShowPrompt(elapsed) {
-    elapsed = elapsed || 0;
-    if (window.ytReady) {
-      showMusicPrompt();
-      return;
-    }
-    // Nếu quá 6 giây mà YouTube API vẫn chưa sẵn sàng (mạng chậm/bị chặn),
-    // bỏ qua bước hỏi nhạc để không giữ chân người dùng ở màn hình loading.
-    if (elapsed >= 6000) {
-      paused = false;
-      tick();
-      return;
-    }
-    setTimeout(() => waitForPlayerThenShowPrompt(elapsed + 150), 150);
-  }
-
   function hideMusicPromptAndResume() {
     overlay.classList.remove('visible');
     setTimeout(() => overlay.classList.remove('show'), 300);
@@ -66,12 +50,12 @@
     bar.style.width = progress + '%';
     pct.textContent = progress + '%';
 
-    // Dừng lại đúng lúc chạm mốc 50% để hỏi bật nhạc
-    // (chờ YouTube player sẵn sàng trước khi hiện popup, để bấm "Có" phát nhạc được ngay)
+    // Dừng lại đúng lúc chạm mốc 50%, đợi thêm ~2.5 giây để YouTube API
+    // kịp tải và khởi tạo xong trước khi hỏi bật nhạc (đảm bảo bấm "Có" phát được ngay)
     if (!halfwayShown && progress >= 50) {
       halfwayShown = true;
       paused = true;
-      waitForPlayerThenShowPrompt();
+      setTimeout(showMusicPrompt, 2500);
       return;
     }
 
@@ -122,40 +106,12 @@ window.onYouTubeIframeAPIReady = function () {
 })();
 
 window.startBackgroundMusic = function () {
-  var toggle = document.getElementById('music-toggle');
   if (!ytReady || !ytPlayer) { window.__pendingPlay = true; return; }
   ytPlayer.setVolume(50);
   ytPlayer.unMute();
   ytPlayer.playVideo();
   musicPlaying = true;
-  if (toggle) {
-    toggle.classList.add('playing');
-    toggle.querySelector('i').className = 'fa-solid fa-volume-high';
-  }
 };
-
-(function () {
-  var toggle = document.getElementById('music-toggle');
-  if (!toggle) return;
-  toggle.classList.add('visible'); // luôn hiện nút để bật/tắt nhạc bất cứ lúc nào
-
-  toggle.addEventListener('click', function () {
-    if (!ytReady) return;
-    if (musicPlaying) {
-      ytPlayer.pauseVideo();
-      musicPlaying = false;
-      toggle.classList.remove('playing');
-      toggle.querySelector('i').className = 'fa-solid fa-music';
-    } else {
-      ytPlayer.unMute();
-      ytPlayer.setVolume(50);
-      ytPlayer.playVideo();
-      musicPlaying = true;
-      toggle.classList.add('playing');
-      toggle.querySelector('i').className = 'fa-solid fa-volume-high';
-    }
-  });
-})();
 
 /* ─── Header: scroll + hamburger ────────────────────────────────────── */
 (function () {
