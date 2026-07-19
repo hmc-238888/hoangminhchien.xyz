@@ -36,6 +36,21 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- MUSIC PROMPT MODAL                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="music-prompt-overlay">
+  <div class="glass-card music-prompt-box">
+    <div class="music-prompt-icon"><i class="fa-solid fa-music"></i></div>
+    <h3>Bật nhạc nền?</h3>
+    <p>Trải nghiệm HMCTricker sẽ tuyệt hơn với nhạc nền. Bạn có muốn bật không?</p>
+    <div class="music-prompt-btns">
+      <button id="music-prompt-no" class="btn-outline">Không, cảm ơn</button>
+      <button id="music-prompt-yes" class="btn-primary"><i class="fa-solid fa-volume-high"></i> Bật nhạc</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- HEADER                                                              -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <header id="header">
@@ -1256,7 +1271,18 @@
 <!-- Cursor Glow -->
 <div id="cursor-glow"></div>
 
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- BACKGROUND MUSIC (YouTube, hidden player)                          -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div id="yt-player-container" style="position:fixed;width:0;height:0;overflow:hidden;">
+  <div id="yt-player"></div>
+</div>
+<button id="music-toggle" aria-label="Bật/tắt nhạc nền" title="Bật/tắt nhạc nền">
+  <i class="fa-solid fa-music"></i>
+</button>
+
 <!-- Script -->
+<script src="https://www.youtube.com/iframe_api"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
